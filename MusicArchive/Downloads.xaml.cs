@@ -168,10 +168,10 @@ namespace MusicArchive
                     if (percent == 1.0)
                     {
                         video.Downloaded = true;
-                        //DebugTextBox.Text = $"Downloaded: {title}";
+                        DebugTextBox.Text = $"Downloaded: {title}";
                         return;
                     }
-                    //DebugTextBox.Text = $"Downloading: {percent:P2}";
+                    DebugTextBox.Text = $"Downloading: {percent:P2}";
                     video.DownloadProgress = percent * video.GridWidth;
                 });
 

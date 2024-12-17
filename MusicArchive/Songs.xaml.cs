@@ -78,18 +78,37 @@ namespace MusicArchive
                 string thumbnailPath = Path.Combine(AppContext.BaseDirectory, "Songs", folderName, "thumbnail.png");
                 string metaDataPath = Path.Combine("Songs", folderName, "metaData.json");
                 string songPath = Path.Combine(AppContext.BaseDirectory, "Songs", folderName, "songFile.webm");
+                SongMetaData? metaData = null;
+                try
+                {
+                    metaData = JsonSerializer.Deserialize<SongMetaData>(File.ReadAllText(metaDataPath));
+                }
+                catch (Exception ex)
+                {
+                    Directory.Delete(folder, true);
 
-                SongMetaData? metaData = JsonSerializer.Deserialize<SongMetaData>(File.ReadAllText(metaDataPath));
+                    var channelFiles = Directory.GetFiles(AppContext.BaseDirectory, "Channels");
+                    foreach(var file in channelFiles)
+                    {
+                        if (Path.GetFileName(folder).Replace(".png", "").EndsWith(Path.GetFileName(file)))
+                        {
+                            File.Delete(file);
+                            break;
+                        }
+                    }
+
+                    continue;
+                }
 
                 SongList.Add(new SongMetaData
                 {
                     ThumbnailPath = thumbnailPath,
-                    Title = metaData?.Title,
-                    Author = metaData?.Author,
-                    Duration = metaData?.Duration,
-                    Playlists = metaData?.Playlists,
-                    FileSize = metaData?.FileSize,
-                    SongPath = songPath,
+                    Title = metaData?.Title ?? "Error",
+                    Author = metaData?.Author ?? "Error",
+                    Duration = metaData?.Duration ?? "Error",
+                    Playlists = metaData?.Playlists ?? [],
+                    FileSize = metaData?.FileSize ?? "Error",
+                    SongPath = songPath ?? Path.Combine(AppContext.BaseDirectory, "Assets", "error.mp3"),
                 });
 
             }
@@ -109,7 +128,18 @@ namespace MusicArchive
                 SearchCharCount = currentCharCount;
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                SongList.Where(song => !song.Title.ToLower().Contains(searchTerm) && !song.Author.ToLower().Contains(searchTerm)).ToList().ForEach(song => SongList.Remove(song));
+                if (searchTerm.StartsWith("artistname:"))
+                {
+                    SongList.Where(song => !song.Author.ToLower().Contains(searchTerm.Replace("artistname:", ""))).ToList().ForEach(song => SongList.Remove(song));
+                }
+                else if (searchTerm.StartsWith("playlsitname:"))
+                {
+
+                }
+                else
+                {
+                    SongList.Where(song => !song.Title.ToLower().Contains(searchTerm) && !song.Author.ToLower().Contains(searchTerm)).ToList().ForEach(song => SongList.Remove(song));
+                }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
         }
@@ -121,7 +151,7 @@ namespace MusicArchive
             if (SongListItems.SelectedItem is SongMetaData songMetaData)
             {
                 //DebugTextBox.Text = $"Double Clicked! {songMetaData.Title}";
-                
+
                 await window.PlaySong(songMetaData);
             }
         }
@@ -144,12 +174,12 @@ namespace MusicArchive
                 CustomPlayBackItem startingItem = null;
                 var customItems = new List<CustomPlayBackItem>();
 
-                foreach(SongMetaData song in SongList)
+                foreach (SongMetaData song in SongList)
                 {
                     MediaSource mediaSource = MediaSource.CreateFromUri(new Uri(song.SongPath));
                     MediaPlaybackItem playbackItem = new(mediaSource);
                     CustomPlayBackItem customPlayBackItem = new(playbackItem, song);
-                    
+
                     playbackList.Items.Add(playbackItem);
                     customItems.Add(customPlayBackItem);
 

@@ -48,7 +48,7 @@ namespace MusicArchive
         {
             if (ChannelListGrid.SelectedItem is ChannelMetaData metaData)
             {
-                App.MainWindow.ChangeFrame(typeof(Songs), metaData.Name);
+                App.MainWindow.ChangeFrame(typeof(Songs), $"ArtistName:{metaData.Name}");
             }
         }
     }

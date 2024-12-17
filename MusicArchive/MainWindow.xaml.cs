@@ -87,6 +87,7 @@ namespace MusicArchive
 
         public void ChangeFrame(Type pageType, string e)
         {
+            NavigationView.SelectedItem = NavigationView.MenuItems[0];
             ContentFrame.Navigate(pageType, e);
         }
         public void MediaPlayerOpened(MediaPlayer sender, object args)
