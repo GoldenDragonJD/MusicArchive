@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MusicArchive.Artists"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicArchive"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+
+    </Page.Resources>
+
+    <Grid Padding="10">
+        <GridView x:Name="ChannelListGrid" ItemsSource="{x:Bind channelList}" HorizontalAlignment="Center" DoubleTapped="GrindButtonDoubbleClick">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="local:ChannelMetaData">
+                    <Border Background="Black" Padding="10" CornerRadius="10" Margin="10">
+                        <StackPanel Spacing="10" Margin="10">
+                            <Border CornerRadius="10">
+                                <Image Width="200" Height="200" Source="{x:Bind Path}" />
+                            </Border>
+                            <TextBlock FontWeight="Bold" TextAlignment="Center" TextWrapping="WrapWholeWords" Text="{x:Bind Name}" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+    </Grid>
+</Page>

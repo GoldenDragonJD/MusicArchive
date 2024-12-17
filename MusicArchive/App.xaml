@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="MusicArchive.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicArchive">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary>
+                    <local:TimeFormatter x:Key="TimeFormatter">
+                        
+                    </local:TimeFormatter>
+                    <!--<CornerRadius x:Key="OverlayCornerRadius">10</CornerRadius>-->
+                    <!--<CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>-->
+                </ResourceDictionary>
+                <!-- Other merged dictionaries here -->
+            </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

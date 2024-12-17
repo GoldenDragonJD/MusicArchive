@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="MusicArchive.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicArchive"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="MusicArchive">
+
+    <NavigationView x:Name="NavigationView" SelectedItem="Songs_Tab" IsBackButtonVisible="Collapsed" PaneDisplayMode="Auto" SelectionChanged="NavigationChanged">
+        <NavigationView.MenuItems>
+            <NavigationViewItem  x:Name="Songs_Tab" Content="Songs" >
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE189;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Icon="MusicInfo" x:Name="Playlist_Tab" Content="Playlist" />
+            <NavigationViewItem Icon="Contact" x:Name="Artists_Tab" Content="Channels" />
+            <NavigationViewItem Icon="Download" x:Name="Downloads_Tab" Content="Download" />
+
+        </NavigationView.MenuItems>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Frame Grid.Row="0" x:Name="ContentFrame"/>
+            <StackPanel Grid.Row="1">
+                <Grid Margin="0, 10, 0 ,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0" Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" x:Name="CoverArt" Source="Assets/placeHolder.png" Width="auto" Height="75" Stretch="Fill" VerticalAlignment="Top" />
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock TextAlignment="Left" x:Name="SongName" Grid.Column="0" Height="30" FontSize="14" FontWeight="Bold" Text="Song Name" Margin="10,0,0,0"/>
+                            <TextBlock TextAlignment="Left" x:Name="ArtistName" Grid.Column="0" Height="30" FontSize="12" FontWeight="Light" Text="Artist Name" Margin="10,-10,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+
+                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Slider 
+                            Grid.Row="0"
+                            x:Name="SongSlider"
+                            Minimum="0"
+                            Maximum="1"
+                            Value="0"
+                            HorizontalAlignment="Stretch"
+                            Grid.ColumnSpan="2"
+                            ThumbToolTipValueConverter="{StaticResource TimeFormatter}"
+                            IsEnabled="False"
+                            Margin="5,0,0,0"  />
+                        <Grid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button IsEnabled="False" Click="BackButtonClicked" Grid.Column="0" x:Name="SkipBackButton" Margin="5,0,5,0">
+                                <SymbolIcon Symbol="Previous" />
+                            </Button>
+
+                            <Button IsEnabled="False" Grid.Column="1" x:Name="PlayButton" Margin="5,0,5,0" Click="PlayButtonClicked">
+                                <SymbolIcon x:Name="PlaySymbol" Symbol="Play" />
+                            </Button>
+
+                            <Button IsEnabled="False" Grid.Column="2" x:Name="StopButton" Margin="5,0,5,0" Click="StopButtonClicked">
+                                <SymbolIcon Symbol="Stop" />
+                            </Button>
+
+                            <Button IsEnabled="False" Click="NextButtonClicked" Grid.Column="3" x:Name="SkipForwardButton" Margin="5,0,5,0">
+                                <SymbolIcon Symbol="Next" />
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Grid.Column="2" Grid.Row="0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="SongTime" Height="30" FontSize="12" FontWeight="Bold" Text="00:00 / 00:00" Margin="10,6,0,0"/>
+                        <Slider IsEnabled="True" Value="50" ValueChanged="VolumeControlSliderChange" x:Name="VolumeSlider" Height="70" Width="25" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="100,0,0,0" Orientation="Vertical" />
+                    </Grid>
+
+                    <MediaPlayerElement AutoPlay="False" x:Name="SongPlayer" />
+                </Grid>
+
+                <TextBlock x:Name="DebugTextBlock"></TextBlock>
+
+            </StackPanel>
+        </Grid>
+    </NavigationView>
+</Window>
