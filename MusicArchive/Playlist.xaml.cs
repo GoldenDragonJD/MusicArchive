@@ -13,6 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using System.Collections.ObjectModel;
+using static MusicArchive.Downloads;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,6 +45,14 @@ namespace MusicArchive
                     Name = fileName,
                     ImagePath = anImage? file : null
                 });
+            }
+        }
+
+        public void GoToSong(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (PlaylistView.SelectedItem is PlaylistMetadata metadata)
+            {
+                App.MainWindow.ChangeFrame(typeof(Songs), $"PlaylistName:{metadata.Name}");
             }
         }
     }

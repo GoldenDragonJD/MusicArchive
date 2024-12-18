@@ -12,7 +12,7 @@
     <Page.Resources>
         <local:SongTemplateSelector x:Key="Selector" SongTemplate="{StaticResource Template}" />
 
-        <MenuFlyout x:Key="OptionMenu">
+        <MenuFlyout x:Key="OptionMenu" Opening="OnMenuFlyoutOpen">
             <MenuFlyoutItem Text="Play" Tag="Play" Click="PlayOneSong">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Play" />
@@ -31,16 +31,10 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
-            <MenuFlyoutSubItem Text="Playlists">
+            <MenuFlyoutSubItem Text="Playlists" x:Name="PlaylistsMenu">
                 <MenuFlyoutSubItem.Icon>
                     <SymbolIcon Symbol="List"/>
                 </MenuFlyoutSubItem.Icon>
-
-                <MenuFlyoutItem Text="Add" Tag="Add" Click="OpenAddFlyout">
-                    <MenuFlyoutItem.Icon>
-                        <SymbolIcon Symbol="Add"/>
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
             </MenuFlyoutSubItem>
 
             <MenuFlyoutItem Text="Remove" Tag="Remove" Click="RemoveSong">

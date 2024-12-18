@@ -133,16 +133,17 @@ namespace MusicArchive
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 if (searchTerm.StartsWith("artistname:"))
                 {
-                    SongList.Where(song => !song.Author.ToLower().Contains(searchTerm.Replace("artistname:", ""))).ToList().ForEach(song => SongList.Remove(song));
+                    SongList.Where(song => !song.Author.ToLower().Contains(searchTerm.Replace("artistname:", "").ToLower())).ToList().ForEach(song => SongList.Remove(song));
                 }
-                else if (searchTerm.StartsWith("playlsitname:"))
+                else if (searchTerm.StartsWith("playlistname:"))
                 {
-                    SongList.Where(song => !song.Playlists.Contains(searchTerm.Replace("playlistname:", ""))).ToList().ForEach(song => SongList.Remove(song));
+                    SongList.Where(song => !song.Playlists.Any(playlist => playlist.ToLower().Contains(searchTerm.Replace("playlistname:", "").ToLower()))).ToList().ForEach(song => SongList.Remove(song));
                 }
                 else
                 {
-                    SongList.Where(song => !song.Title.ToLower().Contains(searchTerm) && !song.Author.ToLower().Contains(searchTerm)).ToList().ForEach(song => SongList.Remove(song));
+                    SongList.Where(song => !song.Title.ToLower().Contains(searchTerm.ToLower()) && !song.Author.ToLower().Contains(searchTerm.ToLower())).ToList().ForEach(song => SongList.Remove(song));
                 }
+
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
         }
@@ -258,6 +259,32 @@ namespace MusicArchive
                     DebugTextBox.Text = ex.Message;
                 }
             }
+        }
+
+        public void OnMenuFlyoutOpen(object sender, object e)
+        {
+            MenuFlyout menuFlyout = sender as MenuFlyout;
+            MenuFlyoutSubItem menuFlyoutSubItem = menuFlyout.Items[3] as MenuFlyoutSubItem;
+
+            var files = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Playlists"));
+            foreach (var file in files)
+            {
+                string fullName = Path.GetFileName(file);
+                string playlistName = fullName.EndsWith(".png") ? fullName.Replace(".png", "") : fullName.Replace(".txt", "");
+
+                menuFlyoutSubItem.Items.Add(new MenuFlyoutItem
+                {
+                    Icon = new SymbolIcon(rightClickedContext.Playlists.Any((playlist) => playlist == playlistName)? Symbol.Remove: Symbol.Add),
+                    Text = playlistName,
+                });
+            }
+
+            menuFlyoutSubItem.Items.Add(new MenuFlyoutItem
+            {
+                Text = "Add",
+            });
+
+            //menuFlyoutSubItem.Items[files.Length].AddHandler(Button.PointerPressedEvent, new RoutedEventHandler(OpenAddFlyout), true);
         }
 
         public void AddToPlaylist(object sender, RoutedEventArgs e)
