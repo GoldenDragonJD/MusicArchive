@@ -14,19 +14,21 @@
     </Page.Resources>
 
     <Grid Padding="10">
-        <GridView x:Name="ChannelListGrid" ItemsSource="{x:Bind channelList}" HorizontalAlignment="Center" DoubleTapped="GrindButtonDoubbleClick">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="local:ChannelMetaData">
-                    <Border Background="Black" Padding="10" CornerRadius="10" Margin="10">
-                        <StackPanel Spacing="10" Margin="10">
-                            <Border CornerRadius="10">
-                                <Image Width="200" Height="200" Source="{x:Bind Path}" />
-                            </Border>
-                            <TextBlock FontWeight="Bold" TextAlignment="Center" TextWrapping="WrapWholeWords" Text="{x:Bind Name}" />
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+        <ScrollView>
+            <GridView x:Name="ChannelListGrid" ItemsSource="{x:Bind channelList}" HorizontalAlignment="Center" DoubleTapped="GrindButtonDoubbleClick">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="local:ChannelMetaData">
+                        <Border Background="Black" Padding="10" CornerRadius="10" Margin="10">
+                            <StackPanel Spacing="10" Margin="10">
+                                <Border CornerRadius="10">
+                                    <Image Width="200" Height="200" Source="{x:Bind Path}" />
+                                </Border>
+                                <TextBlock FontWeight="Bold" TextAlignment="Center" TextWrapping="WrapWholeWords" Text="{x:Bind Name}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </ScrollView>
     </Grid>
 </Page>

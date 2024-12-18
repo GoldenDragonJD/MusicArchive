@@ -19,6 +19,8 @@ using MusicArchive;
 using System.Threading.Tasks;
 using Windows.Media.Playback;
 using Windows.Media.Core;
+using System.Text.Json.Serialization.Metadata;
+using static MusicArchive.Downloads;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,6 +46,7 @@ namespace MusicArchive
     {
         public ObservableCollection<SongMetaData> SongList { get; set; }
         private int SearchCharCount { get; set; }
+        private SongMetaData? rightClickedContext;
 
         public Songs()
         {
@@ -88,7 +91,7 @@ namespace MusicArchive
                     Directory.Delete(folder, true);
 
                     var channelFiles = Directory.GetFiles(AppContext.BaseDirectory, "Channels");
-                    foreach(var file in channelFiles)
+                    foreach (var file in channelFiles)
                     {
                         if (Path.GetFileName(folder).Replace(".png", "").EndsWith(Path.GetFileName(file)))
                         {
@@ -134,7 +137,7 @@ namespace MusicArchive
                 }
                 else if (searchTerm.StartsWith("playlsitname:"))
                 {
-
+                    SongList.Where(song => !song.Playlists.Contains(searchTerm.Replace("playlistname:", ""))).ToList().ForEach(song => SongList.Remove(song));
                 }
                 else
                 {
@@ -165,7 +168,7 @@ namespace MusicArchive
             }
         }
 
-        public async void PlayAllSongs(object sender, RoutedEventArgs e)
+        public void PlayAllSongs(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem menuFlyoutItem)
             {
@@ -193,7 +196,7 @@ namespace MusicArchive
                 App.MainWindow.LoadSongs(playbackList, startingItem, customItems, false);
             }
         }
-        public async void PlayAllSongsShuffled(object sender, RoutedEventArgs e)
+        public void PlayAllSongsShuffled(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem menuFlyoutItem)
             {
@@ -254,6 +257,44 @@ namespace MusicArchive
                 {
                     DebugTextBox.Text = ex.Message;
                 }
+            }
+        }
+
+        public void AddToPlaylist(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void OpenAddFlyout(object sender, RoutedEventArgs e)
+        {
+            AddNewFlyout.ShowAt((FrameworkElement)sender);
+            if (sender is MenuFlyoutItem menuFlyoutItem)
+            {
+                rightClickedContext = menuFlyoutItem.DataContext as SongMetaData;
+            }
+        }
+
+        public void SubmitButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string filePath = Path.Combine(AppContext.BaseDirectory, "Playlists", NewItemTextBox.Text + ".txt");
+                File.WriteAllText(filePath, "");
+                AddNewFlyout.Hide();
+
+                var playlistList = rightClickedContext.Playlists.Append(NewItemTextBox.Text).ToArray(); 
+                JsonSerializerOptions jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
+                JsonSerializerOptions options = jsonSerializerOptions;
+                string songMetaPath = Path.Combine(AppContext.BaseDirectory, "Songs", SantizeTitle($"{rightClickedContext.Title} by {rightClickedContext.Author}"));
+                MetaData metaData = new() { Title = rightClickedContext.Title, Author = rightClickedContext.Author, Duration = rightClickedContext.Duration, FileSize = rightClickedContext.FileSize, Playlists = playlistList };
+                string json = JsonSerializer.Serialize(metaData);
+                File.WriteAllText(Path.Combine(songMetaPath, "metaData.json"), json);
+                rightClickedContext = null;
+            }
+
+            catch (Exception ex)
+            {
+                DebugTextBox.Text = ex.Message;
             }
         }
     }

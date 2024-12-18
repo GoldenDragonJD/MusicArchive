@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,9 +24,41 @@ namespace MusicArchive
     /// </summary>
     public sealed partial class Playlist : Page
     {
+        public ObservableCollection<PlaylistMetadata> PlaylistList { get; set; }
+
         public Playlist()
         {
             this.InitializeComponent();
+            PlaylistList = new ObservableCollection<PlaylistMetadata>();
+            PlaylistView.ItemsSource = PlaylistList;
+
+            var files = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Playlists"));
+            foreach (var file in files)
+            {
+                string fullFileName = Path.GetFileName(file);
+                bool anImage = fullFileName.EndsWith(".png") ? true : false;
+                string fileName = anImage? fullFileName.Replace(".png", "") : fullFileName.Replace(".txt", "");
+
+                PlaylistList.Add(new PlaylistMetadata
+                {
+                    Name = fileName,
+                    ImagePath = anImage? file : null
+                });
+            }
+        }
+    }
+
+    public partial class SelectTemplate : DataTemplateSelector
+    {
+        public DataTemplate? PlaceHolderTemplate { get; set; }
+        public DataTemplate? DataTemplate { get; set; }
+        protected override DataTemplate? SelectTemplateCore(object item, DependencyObject container)
+        {
+            if (item is PlaylistMetadata metadata)
+            {
+                return metadata.ImagePath == null ? PlaceHolderTemplate : DataTemplate;
+            }
+            return base.SelectTemplateCore(item, container);
         }
     }
 }

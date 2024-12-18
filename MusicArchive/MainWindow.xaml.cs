@@ -48,6 +48,7 @@ namespace MusicArchive
 
             string SongFolderName = "Songs";
             string ChannelFolderName = "Channels";
+            string playlistFolderName = "Playlists";
 
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, SongFolderName)))
             {
@@ -57,6 +58,11 @@ namespace MusicArchive
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, ChannelFolderName)))
             {
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, ChannelFolderName));
+            }
+
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, playlistFolderName)))
+            {
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, playlistFolderName));
             }
 
             NavigationView.SelectedItem = NavigationView.MenuItems[0];

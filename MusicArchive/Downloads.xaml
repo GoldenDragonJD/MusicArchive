@@ -19,7 +19,9 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind ThumbnailUrl}" Height="75" Margin="0,0,10,0"/>
+                <Border Grid.Column="0" CornerRadius="10" BorderThickness="1" BorderBrush="Transparent" Width="auto" Margin="0,0,10,0">
+                    <Image Source="{x:Bind ThumbnailUrl}" Height="75"/>
+                </Border>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="{x:Bind Title}" FontWeight="Bold"/>
                     <TextBlock Text="{x:Bind Author}"/>
@@ -44,7 +46,9 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="{x:Bind ThumbnailUrl}" Height="75" Margin="0,0,10,0"/>
+                <Border Grid.Column="0" CornerRadius="10" BorderThickness="1" BorderBrush="Transparent" Width="auto" Margin="0,0,10,0">
+                    <Image Source="{x:Bind ThumbnailUrl}" Height="75"/>
+                </Border>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="{x:Bind Title}" FontWeight="Bold"/>
                     <TextBlock Text="{x:Bind Author}"/>

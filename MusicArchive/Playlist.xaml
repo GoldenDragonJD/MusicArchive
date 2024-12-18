@@ -9,5 +9,28 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    
+    <Page.Resources>
+        <local:SelectTemplate x:Key="Selector" PlaceHolderTemplate="{StaticResource PlaceHolder}"  DataTemplate="{StaticResource CustomDataTemplate}"/>
+
+        <DataTemplate x:Key="PlaceHolder" x:DataType="local:PlaylistMetadata">
+            <StackPanel Width="200" Height="240">
+                <Border CornerRadius="10" Padding="20" VerticalAlignment="Stretch" Background="Black">
+                    <SymbolIcon Symbol="Folder"/>
+                </Border>
+                <TextBlock Text="{x:Bind Name}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CustomDataTemplate" x:DataType="local:PlaylistMetadata">
+            <StackPanel Width="200" Height="240">
+                <Border Padding="20" CornerRadius="10">
+                    <Image Source="{x:Bind ImagePath}" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollView>
+        <GridView x:Name="PlaylistView" ItemTemplateSelector="{StaticResource Selector}" />
+    </ScrollView>
 </Page>

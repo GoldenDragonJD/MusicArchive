@@ -31,6 +31,18 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
+            <MenuFlyoutSubItem Text="Playlists">
+                <MenuFlyoutSubItem.Icon>
+                    <SymbolIcon Symbol="List"/>
+                </MenuFlyoutSubItem.Icon>
+
+                <MenuFlyoutItem Text="Add" Tag="Add" Click="OpenAddFlyout">
+                    <MenuFlyoutItem.Icon>
+                        <SymbolIcon Symbol="Add"/>
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuFlyoutSubItem>
+
             <MenuFlyoutItem Text="Remove" Tag="Remove" Click="RemoveSong">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Delete" />
@@ -45,7 +57,11 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind ThumbnailPath}" Height="75" Margin="0,0,10,0"/>
+                
+                <Border Grid.Column="0" CornerRadius="10" BorderThickness="1" BorderBrush="Transparent" Width="auto" Margin="0,0,10,0">
+                    <Image Source="{x:Bind ThumbnailPath}" Height="75"/>
+                </Border>
+                
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="{x:Bind Title}" FontWeight="Bold"/>
                     <TextBlock Text="{x:Bind Author}"/>
@@ -54,6 +70,14 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
+
+        <Flyout x:Name="AddNewFlyout">
+            <StackPanel Spacing="3">
+                <TextBox x:Name="NewItemTextBox" Width="200" PlaceholderText="Enter text..."/>
+                <Button HorizontalAlignment="Stretch" Content="Add" Click="SubmitButton_Click"/>
+            </StackPanel>
+        </Flyout>
+
     </Page.Resources>
 
     <Grid>
