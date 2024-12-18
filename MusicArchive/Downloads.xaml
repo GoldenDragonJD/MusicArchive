@@ -12,8 +12,16 @@
     <Page.Resources>
         <local:YouTubeVideoTemplateSelector x:Key="TemplateSelector" DownloadedTemplate="{StaticResource Downloaded}" NotDownloadedTemplate="{StaticResource notDownloaded}" />
 
+        <MenuFlyout x:Key="OptionMenus">
+            <MenuFlyoutItem Text="Preview" Tag="Preview" Click="PreviewSong">
+                <MenuFlyoutItem.Icon>
+                    <SymbolIcon Symbol="View"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+
         <DataTemplate x:Key="notDownloaded" x:DataType="local:YouTubeVideo">
-            <Grid Padding="10" Margin="5" Loaded="Grid_Loaded">
+            <Grid ContextFlyout="{StaticResource OptionMenus}" Padding="10" Margin="5" Loaded="Grid_Loaded">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -41,7 +49,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="Downloaded" x:DataType="local:YouTubeVideo">
-            <Grid Padding="10" Margin="5" Background="#9900FF9D">
+            <Grid ContextFlyout="{StaticResource OptionMenus}" Padding="10" Margin="5" Background="#9900FF9D">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>

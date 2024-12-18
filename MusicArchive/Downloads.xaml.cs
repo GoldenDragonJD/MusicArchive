@@ -69,6 +69,15 @@ namespace MusicArchive
             return sanitizedTitle;
         }
 
+        public async void PreviewSong(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuFlyoutItem)
+            {
+                YouTubeVideo youTube = menuFlyoutItem.DataContext as YouTubeVideo;
+                await App.MainWindow.PlayPreview(youTube);
+            }
+        }
+
 
         public async void SearchYoutubeClick(object sender, RoutedEventArgs e)
         {

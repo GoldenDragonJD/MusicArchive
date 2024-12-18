@@ -25,6 +25,8 @@ using System.Globalization;
 using Windows.ApplicationModel;
 using ABI.Windows.Foundation;
 using Windows.Networking.XboxLive;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -207,6 +209,60 @@ namespace MusicArchive
         //    //SongSlider.IsEnabled = false;
         //    PlaySong(SongsQueued[SongIndex]);
         //}
+
+        public async Task PlayPreview(YouTubeVideo youTube)
+        {
+            try
+            {
+                SongName.Text = youTube.Title;
+                ArtistName.Text = youTube.Author;
+                YoutubeClient youtubeClient = new YoutubeClient();
+                var results = await youtubeClient.Videos.Streams.GetManifestAsync(youTube.Id);
+                var audioStreamUrl = results.GetAudioOnlyStreams().GetWithHighestBitrate().Url;
+                //DebugTextBlock.Text = audioStreamUrl;
+
+                // Register event handlers
+
+                // Set the source and start playback
+                CoverArt.Source = new BitmapImage(new Uri(youTube.ThumbnailUrl));
+                SongPlayer.MediaPlayer.Dispose();
+                SongPlayer.SetMediaPlayer(new MediaPlayer());
+                SongPlayer.Source = MediaSource.CreateFromUri(new Uri(audioStreamUrl));
+                SongPlayer.MediaPlayer.Volume = VolumeSlider.Value / 100;
+                SongPlayer.MediaPlayer.Play();
+                positionTimer.Interval = TimeSpan.FromMilliseconds(200); // Poll every 200ms
+                positionTimer.Tick += (sender, e) =>
+                {
+                    if (!isSliderBeingDragged) // Only update slider if not dragged by the user
+                    {
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            SongSlider.Maximum = SongPlayer.MediaPlayer.NaturalDuration.TotalSeconds;
+                            SongSlider.Value = SongPlayer.MediaPlayer.Position.TotalSeconds;
+                            SongPlayer.MediaPlayer.Volume = VolumeSlider.Value / 100;
+
+                            if (SongPlayer.MediaPlayer.CurrentState == MediaPlayerState.Paused) PlaySymbol.Symbol = Symbol.Play;
+
+                            SongTime.Text = $"{SongPlayer.MediaPlayer.Position:mm\\:ss} / {SongPlayer.MediaPlayer.NaturalDuration:mm\\:ss}";
+                        });
+                    }
+                };
+                positionTimer.Start();
+
+
+                PlaySymbol.Symbol = Symbol.Pause;
+
+                PlayButton.IsEnabled = true;
+                StopButton.IsEnabled = true;
+                SkipBackButton.IsEnabled = true;
+                SkipForwardButton.IsEnabled = true;
+                SongSlider.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                DebugTextBlock.Text = ex.Message;
+            }
+        }
 
         public async Task PlaySong(SongMetaData songMetaData)
         {
