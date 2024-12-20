@@ -12,7 +12,7 @@
     <Page.Resources>
         <local:SongTemplateSelector x:Key="Selector" SongTemplate="{StaticResource Template}" />
 
-        <MenuFlyout x:Key="OptionMenu" Opening="OnMenuFlyoutOpen">
+        <MenuFlyout x:Name="FlyOutMenu" x:Key="OptionMenu" Opened="OnMenuFlyoutOpen" Closing="OnMenuFlyoutClose" >
             <MenuFlyoutItem Text="Play" Tag="Play" Click="PlayOneSong">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Play" />
@@ -35,6 +35,8 @@
                 <MenuFlyoutSubItem.Icon>
                     <SymbolIcon Symbol="List"/>
                 </MenuFlyoutSubItem.Icon>
+
+                
             </MenuFlyoutSubItem>
 
             <MenuFlyoutItem Text="Remove" Tag="Remove" Click="RemoveSong">
@@ -44,7 +46,7 @@
             </MenuFlyoutItem>
         </MenuFlyout>
 
-        <DataTemplate x:Key="Template" x:DataType="local:SongMetaData">
+        <DataTemplate x:Key="Template" x:DataType="local:SongMetaData" >
             <Grid ContextFlyout="{StaticResource OptionMenu}" Padding="10" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

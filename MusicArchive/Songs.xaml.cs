@@ -265,6 +265,9 @@ namespace MusicArchive
         {
             MenuFlyout menuFlyout = sender as MenuFlyout;
             MenuFlyoutSubItem menuFlyoutSubItem = menuFlyout.Items[3] as MenuFlyoutSubItem;
+            SongMetaData songMetaData = menuFlyoutSubItem.DataContext as SongMetaData;
+
+            menuFlyoutSubItem.Items.Clear();
 
             var files = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Playlists"));
             foreach (var file in files)
@@ -272,23 +275,68 @@ namespace MusicArchive
                 string fullName = Path.GetFileName(file);
                 string playlistName = fullName.EndsWith(".png") ? fullName.Replace(".png", "") : fullName.Replace(".txt", "");
 
-                menuFlyoutSubItem.Items.Add(new MenuFlyoutItem
+                MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem
                 {
-                    Icon = new SymbolIcon(rightClickedContext.Playlists.Any((playlist) => playlist == playlistName)? Symbol.Remove: Symbol.Add),
+                    Icon = new SymbolIcon(songMetaData.Playlists.Any((playlist) => playlist == playlistName) ? Symbol.Remove : Symbol.Add),
                     Text = playlistName,
-                });
+                };
+                menuFlyoutItem.Click += AddToPlaylist;
+                menuFlyoutSubItem.Items.Add(menuFlyoutItem);
             }
 
-            menuFlyoutSubItem.Items.Add(new MenuFlyoutItem
+            MenuFlyoutItem addButton = new MenuFlyoutItem
             {
-                Text = "Add",
-            });
+                Text = "Add"
+            };
+            addButton.Click += OpenAddFlyout;
+            menuFlyoutSubItem.Items.Add(addButton);
+        }
 
-            //menuFlyoutSubItem.Items[files.Length].AddHandler(Button.PointerPressedEvent, new RoutedEventHandler(OpenAddFlyout), true);
+        public void OnMenuFlyoutClose(object sender, object e)
+        {
+            MenuFlyout menuFlyout = sender as MenuFlyout;
+            MenuFlyoutSubItem menuFlyoutSubItem = menuFlyout.Items[3] as MenuFlyoutSubItem;
         }
 
         public void AddToPlaylist(object sender, RoutedEventArgs e)
         {
+            if (sender is MenuFlyoutItem menu)
+            {
+                SongMetaData songMetaData = menu.DataContext as SongMetaData;
+                List<string> playlist = songMetaData.Playlists.ToList();
+
+                if (menu.Icon is SymbolIcon symbolIcon)
+                {
+                    Symbol iconSymbol = symbolIcon.Symbol;
+
+                    if (iconSymbol == Symbol.Add)
+                    {
+                        playlist.Add(menu.Text);
+                        menu.Icon = new SymbolIcon(Symbol.Remove);
+                    }
+                    else if (iconSymbol == Symbol.Remove)
+                    {
+                        playlist.Remove(menu.Text);
+                        menu.Icon = new SymbolIcon(Symbol.Add);
+                    }
+                }
+
+                MetaData metaData = new MetaData
+                {
+                    Title = songMetaData.Title,
+                    Author = songMetaData.Author,
+                    Duration = songMetaData.Duration,
+                    FileSize = songMetaData.FileSize,
+                    Playlists = playlist.ToArray()
+                };
+
+                JsonSerializerOptions jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
+                JsonSerializerOptions options = jsonSerializerOptions;
+                string songMetaPath = Path.Combine(AppContext.BaseDirectory, "Songs", SantizeTitle($"{songMetaData.Title} by {songMetaData.Author}"));
+                string json = JsonSerializer.Serialize(metaData);
+                File.WriteAllText(Path.Combine(songMetaPath, "metaData.json"), json);
+                LoadSongs();
+            }
 
         }
 
@@ -317,6 +365,7 @@ namespace MusicArchive
                 string json = JsonSerializer.Serialize(metaData);
                 File.WriteAllText(Path.Combine(songMetaPath, "metaData.json"), json);
                 rightClickedContext = null;
+                LoadSongs();
             }
 
             catch (Exception ex)
