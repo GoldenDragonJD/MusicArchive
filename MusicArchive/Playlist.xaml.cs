@@ -177,6 +177,21 @@ namespace MusicArchive
             LoadPlaylists();
             FlyoutRenameMenu.Hide();
         }
+
+        public async void DeletePlaylist(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menu)
+            {
+                PlaylistMetadata metadata = menu.DataContext as PlaylistMetadata;
+
+                string playListPath = metadata.ImagePath;
+                if (playListPath == null) playListPath = Path.Combine(AppContext.BaseDirectory, "Playlists", metadata.Name + ".txt");
+
+                File.Delete(playListPath);
+
+                PlaylistList.Remove(metadata);
+            }
+        }
     }
 
 
