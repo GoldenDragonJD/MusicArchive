@@ -22,6 +22,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 using System.Threading.Tasks;
+using ABI.Windows.Foundation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,6 +35,7 @@ namespace MusicArchive
     public sealed partial class Playlist : Page
     {
         public ObservableCollection<PlaylistMetadata> PlaylistList { get; set; }
+        private PlaylistMetadata playlistRightClicked;
 
         public Playlist()
         {
@@ -42,6 +44,13 @@ namespace MusicArchive
             PlaylistView.ItemsSource = PlaylistList;
 
             LoadPlaylists();
+        }
+
+        public static string SantizeTitle(string title)
+        {
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            string sanitizedTitle = new(title.Where(c => !invalidChars.Contains(c)).ToArray());
+            return sanitizedTitle;
         }
 
         public void LoadPlaylists()
@@ -116,28 +125,57 @@ namespace MusicArchive
                 //var image = (Image)container.FindName("PlaylistImage");
                 //image.Source = new BitmapImage(new Uri(metadata.ImagePath));
                 LoadPlaylists();
-                //DebugTextBlock.Text = "For changes to take effect sometimes it may require you restart the app.";
+                DebugTextBlock.Text = "For changes to take effect sometimes it may require you restart the app.";
             }
         }
 
-        public void AddPlaylist(object sender, RoutedEventArgs e)
+        public void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = PageWindow;
+            if (NewItemTextBox.Text == "")
+            {
+                DebugTextBlock.Text = "Invalid Name";
+                return;
+            }
 
-            double ScreenWidth = mainWindow.ActualWidth;
-            double ScreenHeight = mainWindow.ActualWidth;
-
-            double centerX = ScreenWidth / 2;
-            double centerY = ScreenHeight / 2;
-
-            Windows.Foundation.Point centerPoint = new Windows.Foundation.Point(centerX, centerY);
-
-            AddNewFlyout.ShowAt((FrameworkElement)sender, new FlyoutShowOptions { Position = centerPoint });
+            string filePath = Path.Combine(AppContext.BaseDirectory, "Playlists", SantizeTitle(NewItemTextBox.Text) + ".txt");
+            File.WriteAllText(filePath, "");
+            PlaylistList.Add(new PlaylistMetadata { ImagePath = null, Name = SantizeTitle(NewItemTextBox.Text) });
+            AddNewFlyout2.Hide();
         }
 
-        public async void SubmitButton_Click(object sender, RoutedEventArgs e)
+        public void RenameMenuOpen(object sender, RoutedEventArgs e)
         {
+            double xCenter = PageWindow.ActualWidth / 2;
+            double yCenter = PageWindow.ActualHeight / 2;
 
+            FlyoutRenameMenu.ShowAt((FrameworkElement)PlaylistView, new FlyoutShowOptions
+            {
+                Position = new Windows.Foundation.Point
+                {
+                    X = xCenter,
+                    Y = yCenter
+                }
+            });
+
+            if (sender is MenuFlyoutItem menu)
+            {
+                playlistRightClicked = menu.DataContext as PlaylistMetadata;
+            }
+        }
+
+        public async void RenamePlaylist(object sender, RoutedEventArgs e)
+        {
+            if (RenameText.Text == "" && playlistRightClicked == null)
+            {
+                DebugTextBlock.Text = "Invalid Name or playlistRightClicked null";
+                return;
+            }
+            string playlistName = playlistRightClicked.ImagePath == null ? playlistRightClicked.Name + ".txt" : playlistRightClicked.Name + ".png";
+            string ext = Path.GetExtension(playlistName);
+            StorageFile file = await StorageFile.GetFileFromPathAsync(Path.Combine(AppContext.BaseDirectory, "Playlists", playlistName));
+            await file.RenameAsync(SantizeTitle($"{RenameText.Text}{ext}"));
+            LoadPlaylists();
+            FlyoutRenameMenu.Hide();
         }
     }
 

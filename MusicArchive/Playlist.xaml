@@ -12,20 +12,27 @@
 
     <Page.Resources>
         <local:SelectTemplate x:Key="Selector" PlaceHolderTemplate="{StaticResource PlaceHolder}"  DataTemplate="{StaticResource CustomDataTemplate}"/>
-
-        <MenuFlyout x:Key="OptionMenu">
-            <MenuFlyoutItem Text="Create PlayList" Click="AddPlaylist">
-                <MenuFlyoutItem.Icon>
-                    <SymbolIcon Symbol="Add"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-        </MenuFlyout>
-
+        
         <MenuFlyout x:Key="OptionItemMenu">
             <MenuFlyoutItem Text="Edit Image" Click="ChangeImage">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Pictures"/>
                 </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Rename" Click="RenameMenuOpen">
+                <MenuFlyoutItem.Icon>
+                    <SymbolIcon Symbol="Rename"/>
+                </MenuFlyoutItem.Icon>
+
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="FlyoutRenameMenu">
+                        <StackPanel Spacing="3">
+                            <TextBox x:Name="RenameText" Width="200" PlaceholderText="Enter text..."/>
+                            <Button HorizontalAlignment="Stretch" Content="Rename" Click="RenamePlaylist"/>
+                        </StackPanel>
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+                
             </MenuFlyoutItem>
             <MenuFlyoutItem Text="Remove">
                 <MenuFlyoutItem.Icon>
@@ -33,14 +40,7 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
         </MenuFlyout>
-
-        <Flyout x:Name="AddNewFlyout">
-            <StackPanel Spacing="3">
-                <TextBox x:Name="NewItemTextBox" Width="200" PlaceholderText="Enter text..."/>
-                <Button HorizontalAlignment="Stretch" Content="Add" Click="SubmitButton_Click"/>
-            </StackPanel>
-        </Flyout>
-
+        
         <DataTemplate x:Key="PlaceHolder" x:DataType="local:PlaylistMetadata">
             <StackPanel ContextFlyout="{StaticResource OptionItemMenu}" Background="Black">
                 <Border CornerRadius="20" Padding="20" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" Background="Black">
@@ -58,12 +58,24 @@
                 <TextBlock FontWeight="ExtraBlack" TextAlignment="Center" TextWrapping="WrapWholeWords" Text="{x:Bind Name}" Margin="0 0 0 10" />
             </StackPanel>
         </DataTemplate>
+
+        <Flyout x:Key="FlyoutMenu" x:Name="AddNewFlyout2">
+            <StackPanel Spacing="3">
+                <TextBox x:Name="NewItemTextBox" Width="200" PlaceholderText="Enter text..."/>
+                <Button HorizontalAlignment="Stretch" Content="Add" Click="SubmitButton_Click"/>
+            </StackPanel>
+        </Flyout>
     </Page.Resources>
 
-    <StackPanel>
-        <ScrollView Padding="10">
-            <GridView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ContextFlyout="{StaticResource OptionMenu}" x:Name="PlaylistView" DoubleTapped="GoToSong" ItemTemplateSelector="{StaticResource Selector}" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollView Grid.Row="0" Padding="10" ContextFlyout="{StaticResource FlyoutMenu}">
+            <GridView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="PlaylistView" DoubleTapped="GoToSong" ItemTemplateSelector="{StaticResource Selector}" />
         </ScrollView>
-        <TextBlock x:Name="DebugTextBlock"/>
-    </StackPanel>
+        <TextBlock Grid.Row="1" x:Name="DebugTextBlock"/>
+    </Grid>
 </Page>

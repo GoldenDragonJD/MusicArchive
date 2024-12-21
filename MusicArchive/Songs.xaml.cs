@@ -353,11 +353,11 @@ namespace MusicArchive
         {
             try
             {
-                string filePath = Path.Combine(AppContext.BaseDirectory, "Playlists", NewItemTextBox.Text + ".txt");
+                string filePath = Path.Combine(AppContext.BaseDirectory, "Playlists", SantizeTitle(NewItemTextBox.Text) + ".txt");
                 File.WriteAllText(filePath, "");
                 AddNewFlyout.Hide();
 
-                var playlistList = rightClickedContext.Playlists.Append(NewItemTextBox.Text).ToArray(); 
+                var playlistList = rightClickedContext.Playlists.Append(SantizeTitle(NewItemTextBox.Text)).ToArray(); 
                 JsonSerializerOptions jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
                 JsonSerializerOptions options = jsonSerializerOptions;
                 string songMetaPath = Path.Combine(AppContext.BaseDirectory, "Songs", SantizeTitle($"{rightClickedContext.Title} by {rightClickedContext.Author}"));
