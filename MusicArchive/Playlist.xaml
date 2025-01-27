@@ -34,7 +34,7 @@
                 </FlyoutBase.AttachedFlyout>
                 
             </MenuFlyoutItem>
-            <MenuFlyoutItem Text="Remove">
+            <MenuFlyoutItem Text="Remove" Click="DeletePlaylist">
                 <MenuFlyoutItem.Icon>
                     <SymbolIcon Symbol="Delete"/>
                 </MenuFlyoutItem.Icon>
